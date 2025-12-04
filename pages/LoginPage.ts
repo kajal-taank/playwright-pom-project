@@ -1,49 +1,50 @@
-import { Page, expect } from '@playwright/test';
+import { Page, expect, Locator } from '@playwright/test';
 
-export class LoginPage {
-  readonly page: Page;
+import { BasePage } from './BasePage';
+
+
+export class LoginPage extends BasePage {
+  
 
   constructor(page: Page) {
-    this.page = page;
+     super(page);
   }
 
-  // use Facebook-specific selectors and fallback options
-  usernameInput = () =>
-    this.page.locator('input#email, input[name="email"], input[type="email"]');
+  // All selectors stored in one place
+  private selectors = {
+    username: 'input#email, input[name="email"], input[type="email"]',
+    password: 'input#pass, input[name="pass"], input[type="password"]',
+    loginBtn: 'button[name="login"], button:has-text("Log In")',
+  };
 
-  passwordInput = () =>
-    this.page.locator('input#pass, input[name="pass"], input[type="password"]');
+  // Locator getters
+  private usernameInput(): Locator {
+    return this.page.locator(this.selectors.username);
+  }
 
-  loginButton = () => this.page.locator('button[name="login"], button:has-text("Log In")');
+  private passwordInput(): Locator {
+    return this.page.locator(this.selectors.password);
+  }
 
-  // Accept optional url, default to facebook home/login
-  async goto(url?: string) {
-    const target = url ?? 'https://www.facebook.com/';
-    await this.page.goto(target, { waitUntil: 'load' });
+  private loginButton(): Locator {
+    return this.page.locator(this.selectors.loginBtn);
+  }
 
-    // wait for any of the common login inputs to appear
-    await this.page.waitForSelector(
-      'input#email, input[name="email"], input#pass, input[name="pass"], input[type="email"], input[type="password"]',
-      { timeout: 15000 }
-    );
+  async open(): Promise<void> {
+    await this.page.goto('https://www.facebook.com/');
+    await this.page.waitForSelector(this.selectors.username, { timeout: 15000 });
   }
 
   async login(username: string, password: string) {
-    // explicit visibility waits with higher timeouts
     await expect(this.usernameInput()).toBeVisible({ timeout: 15000 });
     await expect(this.passwordInput()).toBeVisible({ timeout: 15000 });
 
     await this.usernameInput().fill(username);
     await this.passwordInput().fill(password);
 
-    // click and wait for navigation (if login triggers navigation)
     await Promise.all([
-      this.page.waitForNavigation({ waitUntil: 'networkidle', timeout: 20000 }).catch(() => {}),
-      this.loginButton().click(),
+      this.page.waitForNavigation({ waitUntil: 'networkidle' }).catch(() => {}),
+      this.loginButton().click()
     ]);
   }
-
-  // async assertLoggedIn() {
-  //  await expect(this.dashboardHeader()).toHaveText('Dashboard');
-  // }
 }
