@@ -1,6 +1,9 @@
 import { Page, expect, Locator } from '@playwright/test';
 
 import { BasePage } from './BasePage';
+import { credentials }  from '../Types/Credentials';  
+import { promises } from 'dns';
+
 
 
 export class LoginPage extends BasePage {
@@ -35,7 +38,8 @@ export class LoginPage extends BasePage {
     await this.page.waitForSelector(this.selectors.username, { timeout: 15000 });
   }
 
-  async login(username: string, password: string) {
+  async login (creds  : credentials) : Promise<void> {
+    const {username, password} =creds;
     await expect(this.usernameInput()).toBeVisible({ timeout: 15000 });
     await expect(this.passwordInput()).toBeVisible({ timeout: 15000 });
 
