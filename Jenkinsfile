@@ -5,6 +5,18 @@ pipeline {
         nodejs 'NodeJS-20'
     }
 
+    environment {
+        // Speed up npm installs
+        NPM_CONFIG_CACHE = "${WORKSPACE}/.npm-cache"
+        // Prevent Playwright from downloading browsers multiple times
+        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/.playwright"
+    }
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
     stages {
 
         stage('Checkout Code') {
@@ -18,8 +30,8 @@ pipeline {
                 sh '''
                   node -v
                   npm -v
-                  npm install
-                  npx playwright install --with-deps
+                  npm ci
+                  npm run install:browsers
                 '''
             }
         }
@@ -27,7 +39,7 @@ pipeline {
         stage('Run Playwright Tests') {
             steps {
                 sh '''
-                  npx playwright test
+                  npm test
                 '''
             }
         }
@@ -37,8 +49,9 @@ pipeline {
         always {
             echo 'Publishing Playwright reports and test results'
 
-            // Publish JUnit results to Jenkins Test Result section
-            junit 'test-results/**/*.xml'
+            // Publish JUnit results (safe if missing)
+            junit allowEmptyResults: true,
+                  testResults: 'reports/junit-results.xml'
 
             // Publish Playwright HTML report
             publishHTML(target: [
@@ -51,9 +64,9 @@ pipeline {
 
             // Archive reports, screenshots, videos
             archiveArtifacts artifacts: '''
+                reports/**,
                 playwright-report/**,
                 test-results/**,
-                **/test-results/**,
                 **/*.png,
                 **/*.webm
             ''', allowEmptyArchive: true

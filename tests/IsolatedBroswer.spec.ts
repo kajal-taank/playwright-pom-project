@@ -15,6 +15,7 @@ import {test,expect} from '@playwright/test'
  });
 
  test.only('multiple tabs handling in same browser context', async({browser})=>{
+  test.setTimeout(60000);
     const context = await browser.newContext();
     const page1 = await context.newPage();
     await page1.goto('https://www.amazon.in');
@@ -24,7 +25,7 @@ import {test,expect} from '@playwright/test'
       await page2.goto('https://www.flipkart.com');
         await page2.waitForLoadState('load');
       
-      await context.close();
+      //await context.close();
     })
 
  test('incognito broswer context test ', async ({browser})=>

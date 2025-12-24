@@ -3,7 +3,9 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+
 export default defineConfig({
+  timeout: 60000,
  testDir: './tests',
 
   reporter: [

@@ -1,25 +1,27 @@
 {
   "name": "playwright-pom-project",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-      "allure:generate": "allure generate ./allure-results -o ./allure-report --clean"
-
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Playwright POM automation framework",
+  "private": true,
   "type": "commonjs",
+
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "install:browsers": "playwright install --with-deps",
+    "allure:generate": "allure generate ./allure-results -o ./allure-report --clean"
+  },
+
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
-    "allure-playwright": "^3.4.3"
+    "allure-playwright": "^3.4.3",
+    "typescript": "^5.9.3"
   },
+
   "dependencies": {
     "dotenv": "^17.2.3",
-    "typescript": "^5.9.3",
     "zod": "^4.1.13"
   }
 }
