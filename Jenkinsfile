@@ -2,40 +2,24 @@ pipeline {
     agent any
 
     tools {
-        tools {
-    nodejs 'NodeJS-20.11.0'
-}
-
+        nodejs 'NodeJS-20.11.0'
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Install Playwright Browsers') {
-            steps {
-                sh 'npx playwright install'
-            }
-        }
-
-        stage('Run Tests') {
+        stage('Run Playwright Tests') {
             steps {
                 sh 'npx playwright test'
             }
         }
     }
 
-   post {
+    post {
         always {
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
             archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
