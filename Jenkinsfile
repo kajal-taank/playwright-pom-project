@@ -32,10 +32,10 @@ pipeline {
         }
     }
 
-    post {
+   post {
         always {
-            archiveArtifacts 'playwright-report/**'
+            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
         }
     }
 }
-//
