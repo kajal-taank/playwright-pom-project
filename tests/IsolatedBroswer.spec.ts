@@ -1,49 +1,39 @@
+import { test, expect, BrowserContext, Page } from '@playwright/test';
 
-import {test,expect} from '@playwright/test'
- test.describe('Isolated Browser Context Tests',() =>{
+test.describe('Multiple tabs handling in same browser context', () => {
+  let context: BrowserContext;
+  let page1: Page;
+  let page2: Page;
 
-    test('test in isolated browser context', async({browser})=>{
-        const context = await browser.newContext();
-        const page = await context.newPage();
-        await page.goto('https://chatgpt.com');
-        expect(await page.title()).toBe('ChatGPT');
-        await context.close(); 
-    }
-    
-    );
-   
- });
+  test.beforeAll(async ({ browser }) => {
+    // Create a new browser context
+    context = await browser.newContext();
+  });
 
- test.only('multiple tabs handling in same browser context', async({browser})=>{
-  test.setTimeout(120000);
-    const context = await browser.newContext();
-    const page1 = await context.newPage();
-   await page1.goto('https://www.amazon.in');
-await page1.waitForLoadState('networkidle', { timeout: 120000 });
-expect(await page1.title()).toContain('Amazon.in');
+  test('Open multiple tabs and verify titles', async () => {
+    // Open first tab
+    page1 = await context.newPage();
+    await page1.goto('https://www.amazon.in', { waitUntil: 'domcontentloaded', timeout: 180000 });
+    await expect(page1).toHaveTitle(/Amazon\.in/i);
 
-   // expect (await page1.title()).toContain('Amazon.in');
-      const page2 = await context.newPage();
-      await page2.goto('https://www.flipkart.com');
-        await page2.waitForLoadState('load');
-      
-      //await context.close();
-    })
+    // Open second tab
+    page2 = await context.newPage();
+    await page2.goto('https://www.flipkart.com', { waitUntil: 'domcontentloaded', timeout: 180000 });
+    await expect(page2).toHaveTitle(/Flipkart/i);
 
- test('incognito broswer context test ', async ({browser})=>
-{
-    const incognito = await browser.newContext();
-    const page = await incognito.newPage();
-await page.goto('https://www.wikipedia.org');
-await page.waitForLoadState('load');
-expect.soft(await page.title()).toBe('Wikipedia');
-await incognito.close();
+    // Switch back to first tab and interact if needed
+    await page1.bringToFront();
+    // Example: check search box exists
+    const searchBox = await page1.$('input[id="twotabsearchtextbox"]');
+    expect(searchBox).not.toBeNull();
+
+    // Switch to second tab
+    await page2.bringToFront();
+    const flipkartSearch = await page2.$('input[name="q"]');
+    expect(flipkartSearch).not.toBeNull();
+  });
+
+  test.afterAll(async () => {
+    await context.close(); // Close context and all tabs
+  });
 });
-
-
-
-
-
-
-
-
