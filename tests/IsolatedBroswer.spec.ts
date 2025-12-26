@@ -18,9 +18,11 @@ import {test,expect} from '@playwright/test'
   test.setTimeout(60000);
     const context = await browser.newContext();
     const page1 = await context.newPage();
-    await page1.goto('https://www.amazon.in');
-    await page1.waitForLoadState('load');
-    expect (await page1.title()).toContain('Amazon.in');
+   await page1.goto('https://www.amazon.in');
+await page1.waitForLoadState('networkidle');
+expect(await page1.title()).toContain('Amazon.in');
+
+   // expect (await page1.title()).toContain('Amazon.in');
       const page2 = await context.newPage();
       await page2.goto('https://www.flipkart.com');
         await page2.waitForLoadState('load');

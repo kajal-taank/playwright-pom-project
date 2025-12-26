@@ -16,12 +16,13 @@
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
-    "allure-playwright": "^3.4.3",
-    "typescript": "^5.9.3"
+    "allure-playwright": "^3.4.3"
+    
   },
 
   "dependencies": {
     "dotenv": "^17.2.3",
+    "typescript": "^5.9.3",
     "zod": "^4.1.13"
   }
 }

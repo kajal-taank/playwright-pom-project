@@ -3,10 +3,12 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-
 export default defineConfig({
-  timeout: 60000,
- testDir: './tests',
+  testDir: './tests',
+  timeout: 60 * 1000,
+
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 1 : undefined,
 
   reporter: [
     ['list'],
