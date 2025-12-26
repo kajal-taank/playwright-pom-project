@@ -3,8 +3,8 @@ pipeline {
     tools { nodejs 'NodeJS-20' }
 
     environment {
-        USERNAME = credentials('jenkins-username-id')
-        PASSWORD = credentials('jenkins-password-id')
+        USERNAME = credentials('Kajal_Taank')
+        PASSWORD = credentials('Kajaltaank@12345')
         NPM_CONFIG_CACHE = "${WORKSPACE}/.npm-cache"
         PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/.playwright"
     }
