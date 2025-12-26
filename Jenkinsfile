@@ -45,8 +45,8 @@ pipeline {
 
    post {
     always {
-        steps {
-            echo 'Publishing Playwright reports and test results'
+        
+            echo 'Test Case always run'
 
             junit allowEmptyResults: true,
                   testResults: 'reports/junit-results.xml'
@@ -70,15 +70,14 @@ pipeline {
     }
 
     success {
-        steps {
-            echo 'Playwright tests executed successfully'
+       
+            echo 'build succeded'
         }
     }
 
     failure {
-        steps {
-            echo 'Playwright tests failed – check reports'
+       
+            echo 'build failed'
         }
-    }
-}
-}
+    
+
