@@ -15,11 +15,11 @@ import {test,expect} from '@playwright/test'
  });
 
  test.only('multiple tabs handling in same browser context', async({browser})=>{
-  test.setTimeout(60000);
+  test.setTimeout(120000);
     const context = await browser.newContext();
     const page1 = await context.newPage();
    await page1.goto('https://www.amazon.in');
-await page1.waitForLoadState('networkidle');
+await page1.waitForLoadState('networkidle', { timeout: 120000 });
 expect(await page1.title()).toContain('Amazon.in');
 
    // expect (await page1.title()).toContain('Amazon.in');
