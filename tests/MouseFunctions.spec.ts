@@ -78,8 +78,8 @@ test.describe('mouse click functions', () => {
     const endrange = await page.locator('#end-date')
     await startrange.click();
     await endrange.click();
-     await startrange.fill('10/10/2022');
-      await endrange.fill('20/10/2022');
+     await startrange.fill('2022-10-10');
+      await endrange.fill('2022-10-10');
 
 
 

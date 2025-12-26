@@ -1,54 +1,33 @@
 pipeline {
     agent any
-
-    tools {
-        nodejs 'NodeJS-20'
-    }
+    tools { nodejs 'NodeJS-20' }
 
     environment {
-        // Speed up npm installs
+        USERNAME = credentials('jenkins-username-id')
+        PASSWORD = credentials('jenkins-password-id')
         NPM_CONFIG_CACHE = "${WORKSPACE}/.npm-cache"
-        // Prevent Playwright from downloading browsers multiple times
         PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/.playwright"
     }
 
-    options {
-        timestamps()
-        disableConcurrentBuilds()
-    }
-
     stages {
-        stage('Checkout Code') {
-            steps {
-                checkout scm
-            }
-        }
-
+        stage('Checkout Code') { steps { checkout scm } }
         stage('Install Dependencies') {
             steps {
                 sh '''
-                  node -v
-                  npm -v
-                  npm ci
-                  npm run install:browsers
+                    node -v
+                    npm -v
+                    npm ci
+                    npm run install:browsers
                 '''
             }
         }
-
-        stage('Run Playwright Tests') {
-            steps {
-                sh 'npm test'
-            }
-        }
+        stage('Run Playwright Tests') { steps { sh 'npm test' } }
     }
 
     post {
         always {
             echo 'Test Case always run'
-
-            junit allowEmptyResults: true,
-                  testResults: 'reports/junit-results.xml'
-
+            junit allowEmptyResults: true, testResults: 'reports/junit-results.xml'
             publishHTML(target: [
                 reportName: 'Playwright HTML Report',
                 reportDir: 'playwright-report',
@@ -56,7 +35,6 @@ pipeline {
                 keepAll: true,
                 alwaysLinkToLastBuild: true
             ])
-
             archiveArtifacts artifacts: '''
                 reports/**,
                 playwright-report/**,
@@ -65,13 +43,7 @@ pipeline {
                 **/*.webm
             ''', allowEmptyArchive: true
         }
-
-        success {
-            echo 'Build succeeded'
-        }
-
-        failure {
-            echo 'Build failed'
-        }
+        success { echo 'Build succeeded' }
+        failure { echo 'Build failed' }
     }
 }
