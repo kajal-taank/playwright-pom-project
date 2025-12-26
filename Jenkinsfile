@@ -18,7 +18,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 checkout scm
@@ -43,9 +42,8 @@ pipeline {
         }
     }
 
-   post {
-    always {
-        
+    post {
+        always {
             echo 'Test Case always run'
 
             junit allowEmptyResults: true,
@@ -67,17 +65,13 @@ pipeline {
                 **/*.webm
             ''', allowEmptyArchive: true
         }
-    }
 
-    success {
-       
-            echo 'build succeded'
+        success {
+            echo 'Build succeeded'
+        }
+
+        failure {
+            echo 'Build failed'
         }
     }
-
-    failure {
-       
-            echo 'build failed'
-        }
-    
-
+}
