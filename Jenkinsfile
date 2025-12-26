@@ -38,46 +38,50 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
-                sh '''
-                  npm test
-                '''
+                sh 'npm test'
             }
         }
     }
 
     post {
         always {
-            echo 'Publishing Playwright reports and test results'
+            steps {
+                echo 'Publishing Playwright reports and test results'
 
-            // Publish JUnit results (safe if missing)
-            junit allowEmptyResults: true,
-                  testResults: 'reports/junit-results.xml'
+                // Publish JUnit results (safe if missing)
+                junit allowEmptyResults: true,
+                      testResults: 'reports/junit-results.xml'
 
-            // Publish Playwright HTML report
-            publishHTML(target: [
-                reportName: 'Playwright HTML Report',
-                reportDir: 'playwright-report',
-                reportFiles: 'index.html',
-                keepAll: true,
-                alwaysLinkToLastBuild: true
-            ])
+                // Publish Playwright HTML report
+                publishHTML(target: [
+                    reportName: 'Playwright HTML Report',
+                    reportDir: 'playwright-report',
+                    reportFiles: 'index.html',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true
+                ])
 
-            // Archive reports, screenshots, videos
-            archiveArtifacts artifacts: '''
-                reports/**,
-                playwright-report/**,
-                test-results/**,
-                **/*.png,
-                **/*.webm
-            ''', allowEmptyArchive: true
+                // Archive reports, screenshots, videos
+                archiveArtifacts artifacts: '''
+                    reports/**,
+                    playwright-report/**,
+                    test-results/**,
+                    **/*.png,
+                    **/*.webm
+                ''', allowEmptyArchive: true
+            }
         }
 
         success {
-            echo 'Playwright tests executed successfully'
+            steps {
+                echo 'Playwright tests executed successfully'
+            }
         }
 
         failure {
-            echo 'Playwright tests failed – check reports'
+            steps {
+                echo 'Playwright tests failed – check reports'
+            }
         }
     }
 }
